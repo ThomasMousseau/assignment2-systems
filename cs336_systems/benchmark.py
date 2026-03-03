@@ -54,6 +54,9 @@ def build_model_and_batch(device: torch.device):
 def benchmark_forward(model, input_ids, warmup=5, iters=10):
     model.eval() #! just in case there is dropout or something
     times = [] #!(time (ms), is_before_warmup) pairs
+    
+    torch.cuda.memory._record_memory_history(max_entries=1_000_000) 
+    
     with torch.no_grad():
         for i in range(warmup + iters):
             start_evt, end_evt = cuda_timer()
@@ -69,6 +72,9 @@ def benchmark_forward(model, input_ids, warmup=5, iters=10):
     print(f"[Forward]   avg over {warmup+iters} iters (incl. warmup): {avg_incl_warmup:.2f} ms")
     print(f"[Forward]   avg over {iters} iters: {avg_excl_warmup:.2f} ms")
     print(f"[Forward]   std dev over {iters} iters: {torch.std(torch.tensor([t for t, is_after_warmup in times if is_after_warmup])):.2f} ms")
+    
+    torch.cuda.memory._dump_snapshot("memory_snapshot.pickle")
+    torch.cuda.memory._record_memory_history(enabled=False)
     
     return avg_excl_warmup
 
@@ -169,13 +175,15 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}\n")
     
-    # 1.1.4
+    
+    # 1.1.4 - forward and backward pass benchmarking
     cs336_basics.model.scaled_dot_product_attention = annotated_scaled_dot_product_attention
     model, input_ids, targets = build_model_and_batch(device)
     benchmark_forward(model, input_ids)
     benchmark_backward(model, input_ids, targets)
     benchmark_e2e(model, input_ids, targets)
     
-    # 1.1.5
+    # 1.1.6 - memory usage
+ 
 
 

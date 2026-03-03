@@ -1,3 +1,5 @@
+# 1.1.5 - mixed precision
+
 import torch
 
 s = torch.tensor(0,dtype=torch.float32)
