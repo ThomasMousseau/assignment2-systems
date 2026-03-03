@@ -9,6 +9,16 @@
             "console": "integratedTerminal",
             "cwd": "${fileDirname}",
             "justMyCode": false
+        },
+        {
+            "name": "Python: Mixed Precision",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cs336_systems/mixed_precision.py",
+            "console": "integratedTerminal",
+            "cwd": "${fileDirname}",
+            "justMyCode": false
         }
+
     ]
 }

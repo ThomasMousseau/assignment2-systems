@@ -169,12 +169,13 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}\n")
     
+    # 1.1.4
     cs336_basics.model.scaled_dot_product_attention = annotated_scaled_dot_product_attention
-
     model, input_ids, targets = build_model_and_batch(device)
-
     benchmark_forward(model, input_ids)
     benchmark_backward(model, input_ids, targets)
     benchmark_e2e(model, input_ids, targets)
+    
+    # 1.1.5
 
 
